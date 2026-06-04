@@ -1,0 +1,19 @@
+# .github/.importlinter
+# contract checks (should be all kept, 0 broken)
+# $env:PYTHONPATH = "src"
+# uvx --with-editable . --from import-linter lint-imports --config .github/.importlinter
+
+[importlinter]
+root_package = se_codeowners
+
+[importlinter:contract:layers]
+name = layering
+type = layers
+layers =
+    se_codeowners.cli
+    se_codeowners.generate
+    se_codeowners.translate
+    se_codeowners.load
+    se_codeowners.model
+    se_codeowners._narrow
+    se_codeowners.errors

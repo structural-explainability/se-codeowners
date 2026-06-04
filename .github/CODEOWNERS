@@ -1,0 +1,58 @@
+# ============================================================
+# .github/CODEOWNERS
+# ============================================================
+# GENERATED FILE -- do not edit by hand.
+#
+# Source:     .accountability/surfaces.toml
+# Generator:  se-codeowners
+# Regenerate: se-codeowners generate --output .github/CODEOWNERS
+#
+# Each entry reflects the oversight_role assigned to an accountability
+# surface, resolved to a handle via [codeowners.role_handles]. GitHub
+# applies the LAST matching pattern for a given path, so order matters.
+# Surfaces are emitted by codeowners_order, then surface id.
+
+# Surface: public-python-api (role: maintainer)
+/src/se_codeowners/**            @structural-explainability/maintainers
+
+# Surface: tests-and-fixtures (role: maintainer)
+/tests/**                        @structural-explainability/maintainers
+
+# Surface: cli-command-surface (role: maintainer)
+/src/se_codeowners/cli.py        @structural-explainability/maintainers
+/src/se_codeowners/commands/**   @structural-explainability/maintainers
+
+# Surface: codeowners-generation-engine (role: authority_projection)
+/src/se_codeowners/generate.py   @structural-explainability/authority-projection
+/src/se_codeowners/translate.py  @structural-explainability/authority-projection
+
+# Surface: export-and-catalog-boundary (role: authority_projection)
+/src/se_codeowners/export/**     @structural-explainability/authority-projection
+
+# Surface: surface-spec-compatibility (role: spec)
+/src/se_codeowners/load.py       @structural-explainability/spec
+/src/se_codeowners/model.py      @structural-explainability/spec
+/src/se_codeowners/translate.py  @structural-explainability/spec
+/tests/data/**                   @structural-explainability/spec
+
+# Surface: project-configuration (role: maintainer)
+/pyproject.toml                  @structural-explainability/maintainers
+
+# Surface: release-and-automation-authority (role: release)
+/.github/dependabot.yml          @structural-explainability/release
+/.github/workflows/**            @structural-explainability/release
+/.pre-commit-config.yaml         @structural-explainability/release
+/uv.lock                         @structural-explainability/release
+
+# Surface: repository-governance (role: owner)
+/AGENTS.md                       @structural-explainability/owners
+/AI_USE.md                       @structural-explainability/owners
+/CONTRIBUTING.md                 @structural-explainability/owners
+/DECISIONS.md                    @structural-explainability/owners
+/README.md                       @structural-explainability/owners
+
+# Surface: repository-security (role: security)
+/SECURITY.md                     @structural-explainability/security
+
+# Surface: authority-manifest (role: owner)
+/.accountability/surfaces.toml   @structural-explainability/owners

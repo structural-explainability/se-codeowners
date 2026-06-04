@@ -1,0 +1,70 @@
+schema_version = "0.2.0"
+
+[repository]
+name = "datafun-05-sql"
+profile = "instructional-project-surface"
+description = "Fixture used by se-codeowners tests."
+enforcement = "advisory"
+scope = "maintainer"
+oversight_model = "role-based"
+
+[[surface]]
+id = "assignment-instructions"
+name = "Assignment instructions"
+description = "Student-facing instructions."
+paths = ["README.md", "docs/**"]
+risk = "high"
+ai_authority = "assist-only"
+oversight_role = "instructor"
+codeowners_order = 100
+review_focus = ["Does it match the learning objectives?"]
+
+[[surface]]
+id = "example-pipeline-scripts"
+name = "Example pipeline scripts"
+description = "Runnable scripts."
+paths = [
+    "src/datafun/app_retail_duckdb_case.py",
+    "src/datafun/app_retail_sqlite_case.py",
+]
+risk = "high"
+ai_authority = "assist-only"
+oversight_role = "maintainer"
+codeowners_order = 200
+review_focus = ["Does it run from a clean clone?"]
+
+[[surface]]
+id = "data-contract"
+name = "Data contract"
+description = "Raw CSV datasets."
+paths = ["data/raw/**"]
+risk = "high"
+ai_authority = "assist-only"
+oversight_role = "data-steward"
+codeowners_order = 300
+review_focus = ["Are relationships valid?"]
+
+[[surface]]
+id = "license-and-citation"
+name = "License and citation"
+description = "License and citation metadata."
+paths = ["LICENSE", "CITATION.cff"]
+risk = "high"
+ai_authority = "assist-only"
+oversight_role = "owner"
+codeowners_order = 400
+review_focus = ["Is authorship correct?"]
+
+[ai_policy]
+default_authority = "assist-only"
+allowed_without_review = ["Suggest wording improvements"]
+prohibited_without_human_direction = ["Removing required assignment phases"]
+
+[codeowners]
+informs = true
+
+[codeowners.role_handles]
+owner = "@denisecase"
+instructor = "@denisecase"
+maintainer = ["@denisecase", "@nwmissouri/datafun-maintainers"]
+data-steward = "@denisecase"

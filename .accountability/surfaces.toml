@@ -1,0 +1,406 @@
+# ============================================================
+# .accountability/surfaces.toml (Authority-gated surfaces)
+# ============================================================
+
+schema = "accountable-surface-spec"
+schema_version = "0.1.0"
+schema_url = "https://raw.githubusercontent.com/structural-explainability/accountable-surface-spec/main/data/schema/accountability-surfaces.schema.json"
+
+# === Framework Context ===
+
+[meta]
+framework = "Structural Explainability"
+framework_url = "https://github.com/structural-explainability"
+purpose = "Declares authority-bearing repository surfaces, review requirements, evidence requirements, and permitted AI authority."
+
+# === Repository Identity ===
+
+[repository]
+organization = "structural-explainability"
+name = "se-codeowners"
+profile = "repository-protected-surface"
+description = "Shared Python tooling for scaffolding, validating, inspecting, cataloging, and exporting theory-reference artifacts that mirror Lean public surfaces."
+
+# === CODEOWNERS Projection ===
+
+[codeowners]
+informs = true
+requires_code_owner_review = false
+
+# === Local CODEOWNERS Role Resolution ===
+# These role identities are used only for CODEOWNERS owner resolution.
+# Reusable accountable-surface meanings remain expressed through surface.role.kind.
+
+# owner                  overall authority boundary
+# maintainer             ordinary package/API maintenance
+# authority_projection   CODEOWNERS projection machinery
+# spec                   schema/spec compatibility
+# security               security posture
+# release                automation/release authority
+
+[codeowners.role_handles]
+owner = "@structural-explainability/owners"
+maintainer = "@structural-explainability/maintainers"
+authority_projection = "@structural-explainability/authority-projection"
+spec = "@structural-explainability/spec"
+security = "@structural-explainability/security"
+release = "@structural-explainability/release"
+
+# === Local Oversight Roles ===
+
+# Local oversight roles assign review ownership for this repository.
+# Each role maps local responsibility back to reusable accountable-surface roles.
+
+[oversight_roles.owner]
+label = "Owner"
+description = "Reviews changes to the repository's own accountability declaration and authority boundary."
+maps_to = ["authority_boundary", "authority_manifest_surface"]
+requires_review = ["human_review"]
+requires_evidence = ["decision_note", "human_review_record"]
+ai_max_authority = "prohibited"
+
+[oversight_roles.authority_projection]
+label = "Authority Projection"
+description = "Reviews surfaces that project accountable-surface declarations into GitHub CODEOWNERS enforcement artifacts."
+maps_to = [
+    "authority_projection",
+    "generated_output",
+    "public_command_surface",
+    "public_contract",
+    "validation_rule",
+]
+requires_review = ["human_review", "spec_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "drafting"
+
+[oversight_roles.maintainer]
+label = "Maintainer"
+description = "Reviews package behavior, public API, repository documentation, tests, and routine maintenance surfaces."
+maps_to = [
+    "dependency_boundary",
+    "documentation_contract",
+    "project_identity_surface",
+    "public_contract",
+    "public_command_surface",
+    "python_version_contract",
+    "tool_configuration",
+    "validation_rule",
+]
+requires_review = ["human_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "drafting"
+
+[oversight_roles.release]
+label = "Release"
+description = "Reviews automation, release, CI, dependency update, and repository workflow authority."
+maps_to = ["release_authority", "workflow_authority"]
+requires_review = ["human_review", "release_review", "security_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "advisory"
+
+[oversight_roles.security]
+label = "Security"
+description = "Reviews repository surfaces that affect security posture, automation trust, dependency risk, or disclosure process."
+maps_to = ["dependency_boundary", "security_boundary", "workflow_authority"]
+requires_review = ["human_review", "security_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "advisory"
+
+[oversight_roles.spec]
+label = "Specification"
+description = "Reviews compatibility with accountable-surface-spec, schema interpretation, typed parsing, and validation behavior."
+maps_to = ["public_contract", "schema_authority", "validation_rule"]
+requires_review = ["human_review", "schema_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "drafting"
+
+# === Declared Repository Surfaces ===
+
+# Surfaces below are organized by CODEOWNERS processing order.
+# CODEOWNERS applies the LAST matching pattern for a path, so broad surfaces
+# must emit before narrower override surfaces.
+#
+# codeowners_order controls projection order.
+# Lower values emit earlier; later matching patterns take precedence.
+# Ties are emitted alphabetically by surface id.
+#
+# Surface descriptions are repo-specific; reusable role meanings belong in the
+# upstream accountable vocabulary/spec repositories.
+
+# === Level 100: Broad source and test defaults ===
+
+[[surface]]
+id = "public-python-api"
+object_kind = "directory"
+paths = ["src/se_codeowners/**"]
+description = "Shared importable Python API and implementation used by theory repositories."
+oversight_role = "maintainer"
+codeowners_order = 100
+
+[[surface.role]]
+kind = "public_contract"
+requires_review = ["human_review"]
+requires_evidence = ["verification_command_result"]
+ai_max_authority = "drafting"
+
+[[surface.role]]
+kind = "validation_rule"
+requires_review = ["human_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "drafting"
+
+
+[[surface]]
+id = "tests-and-fixtures"
+object_kind = "directory"
+paths = ["tests/**"]
+description = "Test suite and fixtures that define expected behavior."
+oversight_role = "maintainer"
+codeowners_order = 110
+
+[[surface.role]]
+kind = "validation_rule"
+requires_review = ["human_review"]
+requires_evidence = ["verification_command_result"]
+ai_max_authority = "drafting"
+
+
+# === Level 200: Public command and projection implementation surfaces ===
+
+[[surface]]
+id = "cli-command-surface"
+object_kind = "directory"
+paths = ["src/se_codeowners/cli.py", "src/se_codeowners/commands/**"]
+description = "Public command surface for CODEOWNERS generation and drift checking."
+oversight_role = "maintainer"
+codeowners_order = 200
+
+[[surface.role]]
+kind = "public_command_surface"
+requires_review = ["human_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "drafting"
+
+[[surface.role]]
+kind = "public_contract"
+requires_review = ["human_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "drafting"
+
+
+[[surface]]
+id = "codeowners-generation-engine"
+object_kind = "directory"
+paths = ["src/se_codeowners/generate.py", "src/se_codeowners/translate.py"]
+description = "Converts accountable surface paths and oversight roles into GitHub CODEOWNERS entries."
+oversight_role = "authority_projection"
+codeowners_order = 210
+
+[[surface.role]]
+kind = "authority_projection"
+
+[[surface.role]]
+kind = "generated_output"
+
+[[surface.role]]
+kind = "public_contract"
+
+[[surface.role]]
+kind = "validation_rule"
+
+
+[[surface]]
+id = "export-and-catalog-boundary"
+object_kind = "directory"
+paths = ["src/se_codeowners/export/**"]
+description = "Machine-readable export and catalog generation boundary."
+oversight_role = "authority_projection"
+codeowners_order = 220
+
+[[surface.role]]
+kind = "generated_output"
+requires_review = ["human_review"]
+requires_evidence = ["regeneration_record", "verification_command_result"]
+ai_max_authority = "drafting"
+
+[[surface.role]]
+kind = "public_contract"
+requires_review = ["human_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "drafting"
+
+
+# === Level 300: Spec-compatibility overrides ===
+
+[[surface]]
+id = "surface-spec-compatibility"
+object_kind = "directory"
+paths = [
+    "src/se_codeowners/load.py",
+    "src/se_codeowners/model.py",
+    "src/se_codeowners/translate.py",
+    "tests/data/**",
+]
+description = "Documents compatibility between accountable-surface declarations and the CODEOWNERS projection contract."
+oversight_role = "spec"
+codeowners_order = 300
+
+[[surface.role]]
+kind = "public_contract"
+requires_review = ["human_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "drafting"
+
+[[surface.role]]
+kind = "schema_authority"
+requires_review = ["human_review", "schema_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "drafting"
+
+[[surface.role]]
+kind = "validation_rule"
+requires_review = ["human_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "drafting"
+
+
+# === Level 400: Project configuration and package contract ===
+
+[[surface]]
+id = "project-configuration"
+object_kind = "file"
+paths = ["pyproject.toml"]
+description = "Project identity, Python version contract, dependencies, optional dependency groups, build metadata, tool configuration, and command exposure."
+oversight_role = "maintainer"
+codeowners_order = 400
+
+[[surface.role]]
+kind = "dependency_boundary"
+requires_review = ["human_review", "security_review"]
+requires_evidence = ["verification_command_result"]
+ai_max_authority = "drafting"
+
+[[surface.role]]
+kind = "optional_dependency_contract"
+requires_review = ["human_review"]
+requires_evidence = ["verification_command_result"]
+ai_max_authority = "drafting"
+
+[[surface.role]]
+kind = "project_identity_surface"
+requires_review = ["human_review"]
+requires_evidence = ["decision_note"]
+ai_max_authority = "drafting"
+
+[[surface.role]]
+kind = "public_command_surface"
+requires_review = ["human_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "drafting"
+
+[[surface.role]]
+kind = "python_version_contract"
+requires_review = ["human_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "drafting"
+
+[[surface.role]]
+kind = "tool_configuration"
+requires_review = ["human_review"]
+requires_evidence = ["verification_command_result"]
+ai_max_authority = "drafting"
+
+
+# === Level 500: Release and automation authority ===
+
+[[surface]]
+id = "release-and-automation-authority"
+object_kind = "directory"
+paths = [
+    ".github/dependabot.yml",
+    ".github/workflows/**",
+    ".pre-commit-config.yaml",
+    "uv.lock",
+]
+description = "Automation, release, dependency lock, and repository security authority."
+oversight_role = "release"
+codeowners_order = 500
+
+[[surface.role]]
+kind = "release_authority"
+requires_review = ["human_review", "release_review", "security_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "advisory"
+
+[[surface.role]]
+kind = "workflow_authority"
+requires_review = ["human_review", "security_review"]
+requires_evidence = ["decision_note", "verification_command_result"]
+ai_max_authority = "advisory"
+
+
+# === Level 600: Repository governance and security documentation ===
+
+[[surface]]
+id = "repository-governance"
+object_kind = "directory"
+paths = [
+    "AGENTS.md",
+    "AI_USE.md",
+    "CONTRIBUTING.md",
+    "DECISIONS.md",
+    "README.md",
+]
+description = "Repository governance, contribution, AI-use, accountability, and decision records."
+oversight_role = "owner"
+codeowners_order = 600
+
+[[surface.role]]
+kind = "documentation_contract"
+requires_review = ["human_review"]
+requires_evidence = ["decision_note"]
+ai_max_authority = "drafting"
+
+[[surface.role]]
+kind = "security_boundary"
+requires_review = ["human_review", "security_review"]
+requires_evidence = ["decision_note"]
+ai_max_authority = "advisory"
+
+
+[[surface]]
+id = "repository-security"
+object_kind = "file"
+paths = ["SECURITY.md"]
+description = "Repository security policy and disclosure surface."
+oversight_role = "security"
+codeowners_order = 610
+
+[[surface.role]]
+kind = "security_boundary"
+requires_review = ["human_review", "security_review"]
+requires_evidence = ["decision_note"]
+ai_max_authority = "advisory"
+
+
+# === Level 700: Self-protecting authority manifest ===
+
+[[surface]]
+id = "authority-manifest"
+object_kind = "file"
+paths = [".accountability/surfaces.toml"]
+description = "Self-protecting authority manifest for this repository."
+oversight_role = "owner"
+codeowners_order = 700
+
+[[surface.role]]
+kind = "authority_boundary"
+requires_review = ["human_review"]
+requires_evidence = ["decision_note", "human_review_record"]
+ai_max_authority = "prohibited"
+
+[[surface.role]]
+kind = "authority_manifest_surface"
+requires_review = ["human_review"]
+requires_evidence = ["decision_note", "human_review_record"]
+ai_max_authority = "prohibited"

@@ -1,0 +1,47 @@
+# ============================================================
+# CITATION.cff (How to cite this project)
+# ============================================================
+
+# REQ.UNIVERSAL: Professional open projects SHOULD include this file.
+# USAGE: See https://citation-file-format.github.io/ for details.
+
+cff-version: "1.2.0"
+type: software
+
+title: "SE CODEOWNERS"
+version: "0.1.0"
+date-released: "2026-06-04"
+
+authors:
+  - family-names: Case
+    given-names: Denise M.
+    orcid: "https://orcid.org/0000-0001-6165-7389"
+    affiliation: "Northwest Missouri State University, School of Computer Science and Information Systems, Maryville, MO, USA"
+
+year: 2026
+repository-code: "https://github.com/structural-explainability/se-codeowners"
+url: "https://github.com/structural-explainability/se-codeowners"
+
+license: MIT
+
+abstract: >
+  SE CODEOWNERS is a standalone Python CLI for generating GitHub CODEOWNERS
+  files from accountable-surface manifests. It projects role-based oversight
+  declarations from .accountability/surfaces.toml into review-routing entries,
+  preserves explicit CODEOWNERS precedence through codeowners_order, rejects
+  path patterns GitHub cannot express, and provides drift checking for CI and
+  pre-commit workflows.
+
+keywords:
+  - structural-explainability
+  - accountable-surfaces
+  - codeowners
+  - github
+  - governance
+  - accountability
+  - review-routing
+  - drift-checking
+  - toml
+  - python
+
+message: "If you use this work, please cite it using the metadata in this file."
