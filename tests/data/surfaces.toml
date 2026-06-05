@@ -62,6 +62,7 @@ prohibited_without_human_direction = ["Removing required assignment phases"]
 
 [codeowners]
 informs = true
+requires_code_owner_review = false
 
 [codeowners.role_handles]
 owner = "@denisecase"

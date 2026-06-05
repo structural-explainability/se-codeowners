@@ -88,7 +88,7 @@ typeCheckingMode = "strict" # CUSTOM: off | basic | standard | strict
 # WHY: Consistent test discovery and coverage visibility.
 minversion = "9.0"
 testpaths = ["tests"]
-addopts = "--cov=se_codeowners --cov-report=term-missing --cov-fail-under=50"
+addopts = "--cov=se_codeowners --cov-report=term-missing --cov-fail-under=60"
 
 # === RUFF (PYTHON FORMATTING AND LINTING) ===
 
@@ -181,5 +181,5 @@ packages = ["src/se_codeowners"]
 [tool.hatch.version]
 # WHY: Version derived from git tags at build time
 source = "vcs"
-fallback-version = "0.1.0"     # Used when no git tags present (fresh clone, CI).
+fallback-version = "0.2.0"     # Used when no git tags present (fresh clone, CI).
 tag-pattern = "^(?:v)?(?P<version>\\d+\\.\\d+\\.\\d+)$"

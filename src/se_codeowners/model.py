@@ -26,3 +26,4 @@ class SurfacesDoc:
     surfaces: tuple[Surface, ...]
     role_handles: dict[str, tuple[str, ...]]
     informs: bool
+    requires_code_owner_review: bool

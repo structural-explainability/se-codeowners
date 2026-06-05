@@ -18,6 +18,8 @@ def test_render_contains_expected_lines() -> None:
     assert "@denisecase @nwmissouri/datafun-maintainers" in out
     # Patterns are column-aligned (consistent gap before owners).
     assert "/LICENSE" in out
+    assert "# Repository:" in out
+    assert "# [codeowners].requires_code_owner_review = false" in out
 
 
 def test_render_is_deterministic() -> None:

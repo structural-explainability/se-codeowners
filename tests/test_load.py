@@ -9,10 +9,40 @@ from se_codeowners import SurfacesError, load_surfaces
 FIXTURE = Path(__file__).parent / "data" / "surfaces.toml"
 
 
+def test_codeowners_requires_informs_key(tmp_path: Path) -> None:
+    src = FIXTURE.read_text(encoding="utf-8").replace(
+        "informs = true\n",
+        "",
+    )
+    path = tmp_path / "surfaces.toml"
+    path.write_text(src, encoding="utf-8")
+
+    with pytest.raises(
+        SurfacesError, match="codeowners: missing required key 'informs'"
+    ):
+        load_surfaces(path)
+
+
+def test_codeowners_requires_code_owner_review_key(tmp_path: Path) -> None:
+    src = FIXTURE.read_text(encoding="utf-8").replace(
+        "requires_code_owner_review = false\n",
+        "",
+    )
+    path = tmp_path / "surfaces.toml"
+    path.write_text(src, encoding="utf-8")
+
+    with pytest.raises(
+        SurfacesError,
+        match="codeowners: missing required key 'requires_code_owner_review'",
+    ):
+        load_surfaces(path)
+
+
 def test_loads_fixture() -> None:
     doc = load_surfaces(FIXTURE)
     assert doc.repository_name == "datafun-05-sql"
     assert doc.informs is True
+    assert doc.requires_code_owner_review is False
     assert len(doc.surfaces) == 4
     assert {s.oversight_role for s in doc.surfaces} == {
         "instructor",

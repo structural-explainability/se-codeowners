@@ -48,28 +48,34 @@ def load_surfaces(path: Path) -> SurfacesDoc:
 
 def _build_codeowners(
     parsed: dict[str, object],
-) -> tuple[dict[str, tuple[str, ...]], bool]:
+) -> tuple[dict[str, tuple[str, ...]], bool, bool]:
     raw = optional(parsed, "codeowners")
     if raw is None:
-        return {}, False
+        return {}, False, False
+
     table = as_object_dict(raw, ctx="codeowners")
 
-    informs_value = optional(table, "informs")
-    informs = (
-        as_bool(informs_value, ctx="codeowners.informs")
-        if informs_value is not None
-        else False
+    informs = as_bool(
+        require(table, "informs", ctx="codeowners"),
+        ctx="codeowners.informs",
+    )
+
+    requires_code_owner_review = as_bool(
+        require(table, "requires_code_owner_review", ctx="codeowners"),
+        ctx="codeowners.requires_code_owner_review",
     )
 
     handles_value = optional(table, "role_handles")
     if handles_value is None:
-        return {}, informs
+        return {}, informs, requires_code_owner_review
+
     handles_table = as_object_dict(handles_value, ctx="codeowners.role_handles")
     role_handles = {
         role: _normalize_handles(value, ctx=f"codeowners.role_handles.{role}")
         for role, value in handles_table.items()
     }
-    return role_handles, informs
+
+    return role_handles, informs, requires_code_owner_review
 
 
 def _build_doc(parsed: dict[str, object]) -> SurfacesDoc:
@@ -79,12 +85,13 @@ def _build_doc(parsed: dict[str, object]) -> SurfacesDoc:
     repo_name = as_str(
         require(repository, "name", ctx="repository"), ctx="repository.name"
     )
-    role_handles, informs = _build_codeowners(parsed)
+    role_handles, informs, requires_code_owner_review = _build_codeowners(parsed)
     return SurfacesDoc(
         repository_name=repo_name,
         surfaces=_build_surfaces(parsed),
         role_handles=role_handles,
         informs=informs,
+        requires_code_owner_review=requires_code_owner_review,
     )
 
 

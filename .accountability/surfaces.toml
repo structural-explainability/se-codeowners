@@ -24,8 +24,8 @@ description = "Shared Python tooling for scaffolding, validating, inspecting, ca
 # === CODEOWNERS Projection ===
 
 [codeowners]
-informs = true
-requires_code_owner_review = false
+informs = true                           # REQ: An entry must be provided.
+requires_code_owner_review = false       # REQ: An entry must be provided.
 
 # === Local CODEOWNERS Role Resolution ===
 # These role identities are used only for CODEOWNERS owner resolution.
@@ -46,10 +46,13 @@ spec = "@structural-explainability/spec"
 security = "@structural-explainability/security"
 release = "@structural-explainability/release"
 
-# === Local Oversight Roles ===
+# === Required Oversight Role ===
 
 # Local oversight roles assign review ownership for this repository.
 # Each role maps local responsibility back to reusable accountable-surface roles.
+# Every repository MUST provide a local role responsible
+# for the authority manifest itself.
+# By convention this role is named "owner".
 
 [oversight_roles.owner]
 label = "Owner"
@@ -58,6 +61,11 @@ maps_to = ["authority_boundary", "authority_manifest_surface"]
 requires_review = ["human_review"]
 requires_evidence = ["decision_note", "human_review_record"]
 ai_max_authority = "prohibited"
+
+# === Additional Local Oversight Roles ===
+
+# Local oversight roles assign review ownership for this repository.
+# Each role maps local responsibility back to reusable accountable-surface roles.
 
 [oversight_roles.authority_projection]
 label = "Authority Projection"
@@ -129,6 +137,8 @@ ai_max_authority = "drafting"
 
 # === Level 100: Broad source and test defaults ===
 
+# --- Public Python API and implementation surfaces ---
+
 [[surface]]
 id = "public-python-api"
 object_kind = "directory"
@@ -149,6 +159,7 @@ requires_review = ["human_review"]
 requires_evidence = ["decision_note", "verification_command_result"]
 ai_max_authority = "drafting"
 
+# --- Tests and Fixtures ---
 
 [[surface]]
 id = "tests-and-fixtures"
@@ -166,6 +177,8 @@ ai_max_authority = "drafting"
 
 
 # === Level 200: Public command and projection implementation surfaces ===
+
+# --- CLI command surface ---
 
 [[surface]]
 id = "cli-command-surface"
@@ -187,6 +200,7 @@ requires_review = ["human_review"]
 requires_evidence = ["decision_note", "verification_command_result"]
 ai_max_authority = "drafting"
 
+# --- CODEOWNERS generation engine ---
 
 [[surface]]
 id = "codeowners-generation-engine"
@@ -208,6 +222,7 @@ kind = "public_contract"
 [[surface.role]]
 kind = "validation_rule"
 
+# --- Export and Catalog Boundary ---
 
 [[surface]]
 id = "export-and-catalog-boundary"
@@ -231,6 +246,8 @@ ai_max_authority = "drafting"
 
 
 # === Level 300: Spec-compatibility overrides ===
+
+# --- Surface Spec Compatibility ---
 
 [[surface]]
 id = "surface-spec-compatibility"
@@ -265,6 +282,8 @@ ai_max_authority = "drafting"
 
 
 # === Level 400: Project configuration and package contract ===
+
+# --- Project Configuration ---
 
 [[surface]]
 id = "project-configuration"
@@ -313,6 +332,8 @@ ai_max_authority = "drafting"
 
 # === Level 500: Release and automation authority ===
 
+# --- Release and Automation Authority ---
+
 [[surface]]
 id = "release-and-automation-authority"
 object_kind = "directory"
@@ -341,6 +362,8 @@ ai_max_authority = "advisory"
 
 # === Level 600: Repository governance and security documentation ===
 
+# --- Repository Governance ---
+
 [[surface]]
 id = "repository-governance"
 object_kind = "directory"
@@ -367,6 +390,7 @@ requires_review = ["human_review", "security_review"]
 requires_evidence = ["decision_note"]
 ai_max_authority = "advisory"
 
+# --- Repository Security ---
 
 [[surface]]
 id = "repository-security"
@@ -383,7 +407,29 @@ requires_evidence = ["decision_note"]
 ai_max_authority = "advisory"
 
 
-# === Level 700: Self-protecting authority manifest ===
+# === Level 700: Required Self-Protection ===
+#
+# Every accountable-surface manifest MUST declare itself as a protected surface.
+# This surface SHOULD be emitted after ordinary repository surfaces so that
+# CODEOWNERS projection gives the authority manifest the strongest applicable
+# ownership rule.
+#
+# The self-protection surface MUST:
+#
+# - use id = "authority-manifest"
+# - include paths = [".accountability/surfaces.toml"]
+# - declare oversight_role = "owner" or another local role mapped to
+#   authority_boundary and authority_manifest_surface
+# - declare codeowners_order at the final/highest local projection level
+# - prohibit AI authority over the manifest
+# - require human review
+# - require evidence of review
+#
+# Rationale:
+# If an actor with technical capability can rewrite the authority declaration
+# without review, technical capability has silently become authority.
+
+# --- Authority Manifest Self-Protection ---
 
 [[surface]]
 id = "authority-manifest"

@@ -6,28 +6,16 @@ from .translate import translate_pattern
 
 _PLACEHOLDER_TOKENS = ("@OWNER", "OWNER_HANDLE")
 
-_HEADER = """\
-# ============================================================
-# .github/CODEOWNERS
-# ============================================================
-# GENERATED FILE -- do not edit by hand.
-#
-# Source:     .accountability/surfaces.toml
-# Generator:  se-codeowners
-# Regenerate: se-codeowners generate --output .github/CODEOWNERS
-#
-# Each entry reflects the oversight_role assigned to an accountability
-# surface, resolved to a handle via [codeowners.role_handles]. GitHub
-# applies the LAST matching pattern for a given path, so order matters.
-# Surfaces are emitted by codeowners_order, then surface id."""
-
 
 def generate_codeowners_lines(
-    grouped: list[tuple[Surface, list[tuple[str, str]]]], width: int
+    doc: SurfacesDoc,
+    grouped: list[tuple[Surface, list[tuple[str, str]]]],
+    width: int,
 ) -> str:
     """Generate the lines of the CODEOWNERS file.
 
     Args:
+        doc (SurfacesDoc): The surfaces document being rendered.
         grouped (list[tuple[Surface, list[tuple[str, str]]]]): Grouped surfaces and their patterns.
         width (int): The width to pad the patterns to.
 
@@ -35,7 +23,7 @@ def generate_codeowners_lines(
         str: The generated CODEOWNERS file content.
     """
     lines: list[str] = []
-    lines.extend(_HEADER.splitlines())
+    lines.extend(_header(doc).splitlines())
     for surface, rows in grouped:
         lines.append("")
         lines.append(f"# Surface: {surface.id} (role: {surface.oversight_role})")
@@ -73,7 +61,33 @@ def render_codeowners(doc: SurfacesDoc, *, strict: bool = False) -> str:
     if not all_patterns:
         raise SurfacesError("no surfaces with an oversight_role were found")
     width = max(len(pattern) for pattern in all_patterns)
-    return generate_codeowners_lines(grouped, width)
+    return generate_codeowners_lines(doc, grouped, width)
+
+
+def _header(doc: SurfacesDoc) -> str:
+    return f"""\
+# ============================================================
+# .github/CODEOWNERS
+# ============================================================
+# GENERATED FILE -- do not edit by hand.
+#
+# Source:     .accountability/surfaces.toml
+# Generator:  se-codeowners
+# Repository: {doc.repository_name}
+# Regenerate: se-codeowners generate --output .github/CODEOWNERS
+#
+# [codeowners].informs = true means this surfaces manifest intentionally
+# informs the generated GitHub CODEOWNERS projection.
+#
+# [codeowners].requires_code_owner_review = {str(doc.requires_code_owner_review).lower()}
+# records whether repository governance expects GitHub branch protection or
+# rulesets to require CODEOWNER review before protected changes merge.
+# Actual enforcement is configured in GitHub, not in this generated file.
+#
+# Each entry reflects the oversight_role assigned to an accountability
+# surface, resolved to a handle via [codeowners.role_handles]. GitHub
+# applies the LAST matching pattern for a given path, so order matters.
+# Surfaces are emitted by codeowners_order, then surface id."""
 
 
 def _projected_surfaces(doc: SurfacesDoc) -> list[Surface]:
